@@ -27,10 +27,6 @@ public class GetSimilarProductsUseCaseImpl implements GetSimilarProductsUseCase 
   public List<Product> getSimilarProducts(String productId) {
     List<String> similarProductIds = getSimilarProductIdsPort.getSimilarProductIds(productId);
 
-    if (similarProductIds == null) {
-      throw new ProductNotFoundException(productId);
-    }
-
     if (similarProductIds.isEmpty()) {
       return List.of();
     }
@@ -42,7 +38,11 @@ public class GetSimilarProductsUseCaseImpl implements GetSimilarProductsUseCase 
   }
 
   private Product getProductOrNull(String productId) {
-    return getProductPort.getProductById(productId);
+    try {
+      return getProductPort.getProductById(productId);
+    } catch (ProductNotFoundException e) {
+      return null;
+    }
   }
 
 }
